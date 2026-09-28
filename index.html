@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arrests with detentions by ICE</title>
+<style>
+  :root {
+    --line: #155f78;
+    --line-texas: #d9701d;
+    --line-national: #555;
+    --grid: #e6e6e6;
+    --axis: #333;
+    --muted: #747474;
+    --event: #e31a1c;
+  }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #191919;
+    background: #fff;
+  }
+  .ice-chart {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 18px 20px 10px;
+    box-sizing: border-box;
+  }
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin: 0 0 12px;
+    flex-wrap: wrap;
+  }
+  .tab-button {
+    border: 0;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    background: #8a8a8a;
+    cursor: pointer;
+    line-height: 1;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.10);
+  }
+  .tab-button[aria-selected="true"] {
+    background: var(--line);
+  }
+  .tab-button[data-scope="Texas"][aria-selected="true"] {
+    background: var(--line-texas);
+  }
+  .tab-button[data-scope="National"][aria-selected="true"] {
+    background: var(--line-national);
+  }
+  h2 {
+    margin: 4px 0 10px;
+    font-size: clamp(28px, 4.4vw, 42px);
+    line-height: 1.05;
+    letter-spacing: 0;
+  }
+  .deck {
+    margin: 0 0 18px;
+    font-size: clamp(17px, 2.4vw, 23px);
+    line-height: 1.3;
+  }
+  .chart-wrap {
+    width: 100%;
+    position: relative;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .grid line {
+    stroke: var(--grid);
+    stroke-width: 1;
+  }
+  .axis path,
+  .axis line {
+    stroke: var(--axis);
+    stroke-width: 1.2;
+  }
+  .tick text {
+    fill: var(--muted);
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .note {
+    margin: 14px 0 4px;
+    font-size: 15px;
+    color: #666;
+    font-style: italic;
+  }
+  .source {
+    margin: 0;
+    font-size: 15px;
+    color: #777;
+  }
+  .source a {
+    color: #0077b6;
+  }
+  .chart-tooltip {
+    position: absolute;
+    z-index: 10;
+    min-width: 126px;
+    padding: 8px 10px;
+    border: 1px solid #d7d7d7;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.97);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+    color: #191919;
+    font-size: 14px;
+    line-height: 1.35;
+    text-align: center;
+    pointer-events: none;
+    transform: translate(-50%, calc(-100% - 12px));
+    opacity: 0;
+    transition: opacity 80ms linear;
+  }
+  .chart-tooltip[data-visible="true"] {
+    opacity: 1;
+  }
+  .chart-tooltip strong {
+    display: block;
+    font-size: 15px;
+  }
+  .hover-target:focus {
+    outline: none;
+  }
+  @media (max-width: 560px) {
+    .ice-chart {
+      padding: 14px 12px 8px;
+    }
+    .tab-button {
+      font-size: 17px;
+    }
+    .tick text {
+      font-size: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="ice-chart">
+  <div class="tabs" role="tablist" aria-label="Geography">
+    <button class="tab-button" data-scope="Central Texas" aria-selected="true">Central Texas</button>
+    <button class="tab-button" data-scope="Texas" aria-selected="false">Texas</button>
+    <button class="tab-button" data-scope="National" aria-selected="false">National</button>
+  </div>
+  <h2 id="chart-title"></h2>
+  <p class="deck" id="chart-deck"></p>
+  <div class="chart-wrap" id="chart"></div>
+  <p class="note">Note: The data does not include arrests from local agencies or CBP.</p>
+  <p class="source">Chart: Gabriel Velasquez Neira &bull; Source: Deportation Data Project</p>
+</div>
+<script id="chart-data" type="application/json">[
+  {
+    "geography": "Central Texas",
+    "first_value": 101,
+    "last_value": 967,
+    "pct_change": 857.4257,
+    "points": [
+      {
+        "month": "2022-10-01",
+        "arrests": 101
+      },
+      {
+        "month": "2022-11-01",
+        "arrests": 117
+      },
+      {
+        "month": "2022-12-01",
+        "arrests": 127
+      },
+      {
+        "month": "2023-01-01",
+        "arrests": 105
+      },
+      {
+        "month": "2023-02-01",
+        "arrests": 124
+      },
+      {
+        "month": "2023-03-01",
+        "arrests": 150
+      },
+      {
+        "month": "2023-04-01",
+        "arrests": 125
+      },
+      {
+        "month": "2023-05-01",
+        "arrests": 147
+      },
+      {
+        "month": "2023-06-01",
+        "arrests": 149
+      },
+      {
+        "month": "2023-07-01",
+        "arrests": 160
+      },
+      {
+        "month": "2023-08-01",
+        "arrests": 165
+      },
+      {
+        "month": "2023-09-01",
+        "arrests": 106
+      },
+      {
+        "month": "2023-10-01",
+        "arrests": 125
+      },
+      {
+        "month": "2023-11-01",
+        "arrests": 108
+      },
+      {
+        "month": "2023-12-01",
+        "arrests": 168
+      },
+      {
+        "month": "2024-01-01",
+        "arrests": 119
+      },
+      {
+        "month": "2024-02-01",
+        "arrests": 120
+      },
+      {
+        "month": "2024-03-01",
+        "arrests": 143
+      },
+      {
+        "month": "2024-04-01",
+        "arrests": 155
+      },
+      {
+        "month": "2024-05-01",
+        "arrests": 169
+      },
+      {
+        "month": "2024-06-01",
+        "arrests": 148
+      },
+      {
+        "month": "2024-07-01",
+        "arrests": 189
+      },
+      {
+        "month": "2024-08-01",
+        "arrests": 184
+      },
+      {
+        "month": "2024-09-01",
+        "arrests": 184
+      },
+      {
+        "month": "2024-10-01",
+        "arrests": 238
+      },
+      {
+        "month": "2024-11-01",
+        "arrests": 190
+      },
+      {
+        "month": "2024-12-01",
+        "arrests": 223
+      },
+      {
+        "month": "2025-01-01",
+        "arrests": 237
+      },
+      {
+        "month": "2025-02-01",
+        "arrests": 370
+      },
+      {
+        "month": "2025-03-01",
+        "arrests": 383
+      },
+      {
+        "month": "2025-04-01",
+        "arrests": 424
+      },
+      {
+        "month": "2025-05-01",
+        "arrests": 431
+      },
+      {
+        "month": "2025-06-01",
+        "arrests": 489
+      },
+      {
+        "month": "2025-07-01",
+        "arrests": 510
+      },
+      {
+        "month": "2025-08-01",
+        "arrests": 484
+      },
+      {
+        "month": "2025-09-01",
+        "arrests": 533
+      },
+      {
+        "month": "2025-10-01",
+        "arrests": 460
+      },
+      {
+        "month": "2025-11-01",
+        "arrests": 480
+      },
+      {
+        "month": "2025-12-01",
+        "arrests": 551
+      },
+      {
+        "month": "2026-01-01",
+        "arrests": 671
+      },
+      {
+        "month": "2026-02-01",
+        "arrests": 517
+      },
+      {
+        "month": "2026-03-01",
+        "arrests": 550
+      },
+      {
+        "month": "2026-04-01",
+        "arrests": 564
+      },
+      {
+        "month": "2026-05-01",
+        "arrests": 653
+      },
+      {
+        "month": "2026-06-01",
+        "arrests": 895
+      },
+      {
+        "month": "2026-07-01",
+        "arrests": 967
+      }
+    ]
+  },
+  {
+    "geography": "National",
+    "first_value": 16613,
+    "last_value": 49091,
+    "pct_change": 195.4975,
+    "points": [
+      {
+        "month": "2022-10-01",
+        "arrests": 16613
+      },
+      {
+        "month": "2022-11-01",
+        "arrests": 16400
+      },
+      {
+        "month": "2022-12-01",
+        "arrests": 15235
+      },
+      {
+        "month": "2023-01-01",
+        "arrests": 17970
+      },
+      {
+        "month": "2023-02-01",
+        "arrests": 16098
+      },
+      {
+        "month": "2023-03-01",
+        "arrests": 15683
+      },
+      {
+        "month": "2023-04-01",
+        "arrests": 13285
+      },
+      {
+        "month": "2023-05-01",
+        "arrests": 13628
+      },
+      {
+        "month": "2023-06-01",
+        "arrests": 12543
+      },
+      {
+        "month": "2023-07-01",
+        "arrests": 11604
+      },
+      {
+        "month": "2023-08-01",
+        "arrests": 11741
+      },
+      {
+        "month": "2023-09-01",
+        "arrests": 10516
+      },
+      {
+        "month": "2023-10-01",
+        "arrests": 10042
+      },
+      {
+        "month": "2023-11-01",
+        "arrests": 8926
+      },
+      {
+        "month": "2023-12-01",
+        "arrests": 9848
+      },
+      {
+        "month": "2024-01-01",
+        "arrests": 8509
+      },
+      {
+        "month": "2024-02-01",
+        "arrests": 9593
+      },
+      {
+        "month": "2024-03-01",
+        "arrests": 9621
+      },
+      {
+        "month": "2024-04-01",
+        "arrests": 10193
+      },
+      {
+        "month": "2024-05-01",
+        "arrests": 10244
+      },
+      {
+        "month": "2024-06-01",
+        "arrests": 8562
+      },
+      {
+        "month": "2024-07-01",
+        "arrests": 9466
+      },
+      {
+        "month": "2024-08-01",
+        "arrests": 9178
+      },
+      {
+        "month": "2024-09-01",
+        "arrests": 8390
+      },
+      {
+        "month": "2024-10-01",
+        "arrests": 9495
+      },
+      {
+        "month": "2024-11-01",
+        "arrests": 8178
+      },
+      {
+        "month": "2024-12-01",
+        "arrests": 8507
+      },
+      {
+        "month": "2025-01-01",
+        "arrests": 12174
+      },
+      {
+        "month": "2025-02-01",
+        "arrests": 17135
+      },
+      {
+        "month": "2025-03-01",
+        "arrests": 18616
+      },
+      {
+        "month": "2025-04-01",
+        "arrests": 17641
+      },
+      {
+        "month": "2025-05-01",
+        "arrests": 22323
+      },
+      {
+        "month": "2025-06-01",
+        "arrests": 29788
+      },
+      {
+        "month": "2025-07-01",
+        "arrests": 26819
+      },
+      {
+        "month": "2025-08-01",
+        "arrests": 27813
+      },
+      {
+        "month": "2025-09-01",
+        "arrests": 32676
+      },
+      {
+        "month": "2025-10-01",
+        "arrests": 37042
+      },
+      {
+        "month": "2025-11-01",
+        "arrests": 34555
+      },
+      {
+        "month": "2025-12-01",
+        "arrests": 39722
+      },
+      {
+        "month": "2026-01-01",
+        "arrests": 37441
+      },
+      {
+        "month": "2026-02-01",
+        "arrests": 29551
+      },
+      {
+        "month": "2026-03-01",
+        "arrests": 30568
+      },
+      {
+        "month": "2026-04-01",
+        "arrests": 31160
+      },
+      {
+        "month": "2026-05-01",
+        "arrests": 32253
+      },
+      {
+        "month": "2026-06-01",
+        "arrests": 42588
+      },
+      {
+        "month": "2026-07-01",
+        "arrests": 49091
+      }
+    ]
+  },
+  {
+    "geography": "Texas",
+    "first_value": 3913,
+    "last_value": 11986,
+    "pct_change": 206.3123,
+    "points": [
+      {
+        "month": "2022-10-01",
+        "arrests": 3913
+      },
+      {
+        "month": "2022-11-01",
+        "arrests": 3733
+      },
+      {
+        "month": "2022-12-01",
+        "arrests": 3196
+      },
+      {
+        "month": "2023-01-01",
+        "arrests": 3294
+      },
+      {
+        "month": "2023-02-01",
+        "arrests": 3267
+      },
+      {
+        "month": "2023-03-01",
+        "arrests": 3773
+      },
+      {
+        "month": "2023-04-01",
+        "arrests": 3184
+      },
+      {
+        "month": "2023-05-01",
+        "arrests": 3194
+      },
+      {
+        "month": "2023-06-01",
+        "arrests": 2992
+      },
+      {
+        "month": "2023-07-01",
+        "arrests": 3315
+      },
+      {
+        "month": "2023-08-01",
+        "arrests": 3142
+      },
+      {
+        "month": "2023-09-01",
+        "arrests": 3104
+      },
+      {
+        "month": "2023-10-01",
+        "arrests": 2440
+      },
+      {
+        "month": "2023-11-01",
+        "arrests": 2345
+      },
+      {
+        "month": "2023-12-01",
+        "arrests": 3723
+      },
+      {
+        "month": "2024-01-01",
+        "arrests": 2188
+      },
+      {
+        "month": "2024-02-01",
+        "arrests": 2510
+      },
+      {
+        "month": "2024-03-01",
+        "arrests": 2676
+      },
+      {
+        "month": "2024-04-01",
+        "arrests": 2462
+      },
+      {
+        "month": "2024-05-01",
+        "arrests": 2620
+      },
+      {
+        "month": "2024-06-01",
+        "arrests": 2335
+      },
+      {
+        "month": "2024-07-01",
+        "arrests": 2425
+      },
+      {
+        "month": "2024-08-01",
+        "arrests": 2590
+      },
+      {
+        "month": "2024-09-01",
+        "arrests": 2262
+      },
+      {
+        "month": "2024-10-01",
+        "arrests": 2614
+      },
+      {
+        "month": "2024-11-01",
+        "arrests": 2229
+      },
+      {
+        "month": "2024-12-01",
+        "arrests": 2461
+      },
+      {
+        "month": "2025-01-01",
+        "arrests": 3011
+      },
+      {
+        "month": "2025-02-01",
+        "arrests": 4009
+      },
+      {
+        "month": "2025-03-01",
+        "arrests": 4202
+      },
+      {
+        "month": "2025-04-01",
+        "arrests": 3896
+      },
+      {
+        "month": "2025-05-01",
+        "arrests": 5002
+      },
+      {
+        "month": "2025-06-01",
+        "arrests": 7156
+      },
+      {
+        "month": "2025-07-01",
+        "arrests": 6832
+      },
+      {
+        "month": "2025-08-01",
+        "arrests": 7864
+      },
+      {
+        "month": "2025-09-01",
+        "arrests": 8071
+      },
+      {
+        "month": "2025-10-01",
+        "arrests": 9931
+      },
+      {
+        "month": "2025-11-01",
+        "arrests": 9539
+      },
+      {
+        "month": "2025-12-01",
+        "arrests": 11131
+      },
+      {
+        "month": "2026-01-01",
+        "arrests": 8991
+      },
+      {
+        "month": "2026-02-01",
+        "arrests": 7113
+      },
+      {
+        "month": "2026-03-01",
+        "arrests": 7525
+      },
+      {
+        "month": "2026-04-01",
+        "arrests": 7479
+      },
+      {
+        "month": "2026-05-01",
+        "arrests": 7560
+      },
+      {
+        "month": "2026-06-01",
+        "arrests": 10758
+      },
+      {
+        "month": "2026-07-01",
+        "arrests": 11986
+      }
+    ]
+  }
+]</script>
+<script>
+(function () {
+  const payload = JSON.parse(document.getElementById("chart-data").textContent);
+  const metricLabel = "arrests that result in detention";
+  const headlineMetric = "Arrests with detentions by ICE";
+  const eventDate = new Date("2025-01-20T00:00:00");
+  const monthNames = ["Jan.", "Feb.", "March", "April", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
+  const shortMonths = ["Jan", "Feb", "March", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+  const colorByScope = {
+    "Central Texas": "#155f78",
+    "Texas": "#d9701d",
+    "National": "#555555"
+  };
+  const dataByScope = Object.fromEntries(payload.map(d => [d.geography, d]));
+
+  function comma(value) {
+    return Math.round(value).toLocaleString("en-US");
+  }
+
+  function pct(value) {
+    return Math.round(value).toLocaleString("en-US");
+  }
+
+  function parseMonth(value) {
+    return new Date(value + "T00:00:00");
+  }
+
+  function formatMonthYear(date) {
+    return monthNames[date.getMonth()] + " " + date.getFullYear();
+  }
+
+  function niceMax(value) {
+    if (value <= 1000) return Math.ceil(value / 100) * 100;
+    if (value <= 10000) return Math.ceil(value / 1000) * 1000;
+    return Math.ceil(value / 10000) * 10000;
+  }
+
+  function linePath(points, x, y) {
+    return points.map((d, i) => {
+      const command = i === 0 ? "M" : "L";
+      return command + x(d.date).toFixed(2) + "," + y(d.arrests).toFixed(2);
+    }).join(" ");
+  }
+
+  function interpolateValue(points, date) {
+    const rightIndex = points.findIndex(d => d.date >= date);
+    if (rightIndex <= 0) return points[0].arrests;
+    if (rightIndex === -1) return points[points.length - 1].arrests;
+    const left = points[rightIndex - 1];
+    const right = points[rightIndex];
+    const fraction = (date - left.date) / (right.date - left.date);
+    return left.arrests + fraction * (right.arrests - left.arrests);
+  }
+
+  function draw(scope) {
+    const record = dataByScope[scope];
+    const points = record.points.map(d => ({
+      date: parseMonth(d.month),
+      arrests: Number(d.arrests)
+    }));
+
+    const container = document.getElementById("chart");
+    container.innerHTML = "";
+
+    document.getElementById("chart-title").textContent = headlineMetric + " in " + scope;
+    document.getElementById("chart-deck").textContent =
+      "The number of ICE " + metricLabel + " has risen by " + pct(record.pct_change) +
+      "% from Oct. 2022 to July 2026.";
+
+    const width = 920;
+    const height = 620;
+    const margin = { top: 25, right: 70, bottom: 76, left: 70 };
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+    const minDate = points[0].date;
+    const maxDate = points[points.length - 1].date;
+    const maxY = niceMax(Math.max(...points.map(d => d.arrests)));
+    const tickStep = maxY <= 1000 ? 100 : maxY <= 10000 ? 1000 : 10000;
+    const yTicks = [];
+    for (let v = 0; v <= maxY; v += tickStep) yTicks.push(v);
+
+    const x = date => margin.left + ((date - minDate) / (maxDate - minDate)) * plotWidth;
+    const y = value => margin.top + plotHeight - (value / maxY) * plotHeight;
+    const color = colorByScope[scope] || "#155f78";
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+    svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", headlineMetric + " in " + scope);
+
+    const grid = document.createElementNS(svg.namespaceURI, "g");
+    grid.setAttribute("class", "grid");
+    yTicks.forEach(tick => {
+      const line = document.createElementNS(svg.namespaceURI, "line");
+      line.setAttribute("x1", margin.left);
+      line.setAttribute("x2", width - margin.right);
+      line.setAttribute("y1", y(tick));
+      line.setAttribute("y2", y(tick));
+      grid.appendChild(line);
+    });
+    svg.appendChild(grid);
+
+    const yAxis = document.createElementNS(svg.namespaceURI, "g");
+    yTicks.forEach(tick => {
+      const text = document.createElementNS(svg.namespaceURI, "text");
+      text.setAttribute("x", margin.left - 10);
+      text.setAttribute("y", y(tick) + 5);
+      text.setAttribute("text-anchor", "end");
+      text.setAttribute("class", "tick");
+      text.textContent = comma(tick);
+      yAxis.appendChild(text);
+    });
+    svg.appendChild(yAxis);
+
+    const xAxisLine = document.createElementNS(svg.namespaceURI, "line");
+    xAxisLine.setAttribute("x1", margin.left);
+    xAxisLine.setAttribute("x2", width - margin.right);
+    xAxisLine.setAttribute("y1", y(0));
+    xAxisLine.setAttribute("y2", y(0));
+    xAxisLine.setAttribute("stroke", "#333");
+    xAxisLine.setAttribute("stroke-width", "1.4");
+    svg.appendChild(xAxisLine);
+
+    const xTickMonths = points.filter(d => [0, 3, 6, 9].includes(d.date.getMonth()));
+    xTickMonths.forEach(d => {
+      const text = document.createElementNS(svg.namespaceURI, "text");
+      text.setAttribute("x", x(d.date));
+      text.setAttribute("y", height - 42);
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("class", "tick");
+      const label = shortMonths[d.date.getMonth()] + (d.date.getMonth() === 0 || d.date.getTime() === minDate.getTime() ? "\n" + d.date.getFullYear() : "");
+      label.split("\n").forEach((part, i) => {
+        const tspan = document.createElementNS(svg.namespaceURI, "tspan");
+        tspan.setAttribute("x", x(d.date));
+        tspan.setAttribute("dy", i === 0 ? 0 : 22);
+        tspan.textContent = part;
+        text.appendChild(tspan);
+      });
+      svg.appendChild(text);
+    });
+
+    const eventX = x(eventDate);
+    const eventValue = interpolateValue(points, eventDate);
+    const eventY = y(eventValue);
+
+    const defs = document.createElementNS(svg.namespaceURI, "defs");
+    const arrowMarker = document.createElementNS(svg.namespaceURI, "marker");
+    arrowMarker.setAttribute("id", "event-arrowhead");
+    arrowMarker.setAttribute("viewBox", "0 0 8 8");
+    arrowMarker.setAttribute("refX", "7");
+    arrowMarker.setAttribute("refY", "4");
+    arrowMarker.setAttribute("markerWidth", "8");
+    arrowMarker.setAttribute("markerHeight", "8");
+    arrowMarker.setAttribute("orient", "auto");
+    const arrowHead = document.createElementNS(svg.namespaceURI, "path");
+    arrowHead.setAttribute("d", "M0,0 L8,4 L0,8 Z");
+    arrowHead.setAttribute("fill", "#191919");
+    arrowMarker.appendChild(arrowHead);
+    defs.appendChild(arrowMarker);
+    svg.appendChild(defs);
+
+    const eventLine = document.createElementNS(svg.namespaceURI, "line");
+    eventLine.setAttribute("x1", eventX);
+    eventLine.setAttribute("x2", eventX);
+    eventLine.setAttribute("y1", margin.top);
+    eventLine.setAttribute("y2", y(0));
+    eventLine.setAttribute("stroke", "#e31a1c");
+    eventLine.setAttribute("stroke-width", "1.2");
+    svg.appendChild(eventLine);
+
+    const annotationY = Math.max(margin.top + 42, eventY - 92);
+    const annotation = document.createElementNS(svg.namespaceURI, "text");
+    annotation.setAttribute("x", eventX - 24);
+    annotation.setAttribute("y", annotationY);
+    annotation.setAttribute("text-anchor", "end");
+    annotation.setAttribute("font-size", "18");
+    annotation.setAttribute("font-weight", "700");
+    const annotationLine1 = document.createElementNS(svg.namespaceURI, "tspan");
+    annotationLine1.setAttribute("x", eventX - 24);
+    annotationLine1.textContent = "Trump takes office";
+    const annotationLine2 = document.createElementNS(svg.namespaceURI, "tspan");
+    annotationLine2.setAttribute("x", eventX - 24);
+    annotationLine2.setAttribute("dy", "22");
+    annotationLine2.textContent = "Jan. 20, 2025";
+    annotation.appendChild(annotationLine1);
+    annotation.appendChild(annotationLine2);
+    svg.appendChild(annotation);
+
+    const eventArrow = document.createElementNS(svg.namespaceURI, "path");
+    const arrowStartX = eventX - 80;
+    const arrowStartY = annotationY + 30;
+    eventArrow.setAttribute(
+      "d",
+      "M" + arrowStartX + "," + arrowStartY +
+      " Q" + (eventX - 28) + "," + (eventY - 48) +
+      " " + eventX + "," + eventY
+    );
+    eventArrow.setAttribute("fill", "none");
+    eventArrow.setAttribute("stroke", "#191919");
+    eventArrow.setAttribute("stroke-width", "1.8");
+    eventArrow.setAttribute("marker-end", "url(#event-arrowhead)");
+    svg.appendChild(eventArrow);
+
+    const path = document.createElementNS(svg.namespaceURI, "path");
+    path.setAttribute("d", linePath(points, x, y));
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", color);
+    path.setAttribute("stroke-width", "3.2");
+    path.setAttribute("stroke-linejoin", "round");
+    path.setAttribute("stroke-linecap", "round");
+    svg.appendChild(path);
+
+    const hoverGuide = document.createElementNS(svg.namespaceURI, "line");
+    hoverGuide.setAttribute("y1", margin.top);
+    hoverGuide.setAttribute("y2", y(0));
+    hoverGuide.setAttribute("stroke", "#777");
+    hoverGuide.setAttribute("stroke-width", "1");
+    hoverGuide.setAttribute("stroke-dasharray", "3 3");
+    hoverGuide.setAttribute("visibility", "hidden");
+    hoverGuide.setAttribute("pointer-events", "none");
+    svg.appendChild(hoverGuide);
+
+    const hoverMarker = document.createElementNS(svg.namespaceURI, "circle");
+    hoverMarker.setAttribute("r", "6");
+    hoverMarker.setAttribute("fill", "#fff");
+    hoverMarker.setAttribute("stroke", color);
+    hoverMarker.setAttribute("stroke-width", "3");
+    hoverMarker.setAttribute("visibility", "hidden");
+    hoverMarker.setAttribute("pointer-events", "none");
+    svg.appendChild(hoverMarker);
+
+    const last = points[points.length - 1];
+    const endLabel = document.createElementNS(svg.namespaceURI, "text");
+    endLabel.setAttribute("x", x(last.date) + 10);
+    endLabel.setAttribute("y", y(last.arrests) + 6);
+    endLabel.setAttribute("font-size", "18");
+    endLabel.setAttribute("font-weight", "700");
+    endLabel.setAttribute("fill", color);
+    endLabel.textContent = comma(last.arrests);
+    svg.appendChild(endLabel);
+
+    const tooltip = document.createElement("div");
+    tooltip.className = "chart-tooltip";
+    tooltip.setAttribute("role", "tooltip");
+    tooltip.setAttribute("aria-hidden", "true");
+
+    function showTooltip(point) {
+      const pointX = x(point.date);
+      const pointY = y(point.arrests);
+      const svgRect = svg.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const pixelX = (pointX / width) * svgRect.width + svgRect.left - containerRect.left;
+      const pixelY = (pointY / height) * svgRect.height + svgRect.top - containerRect.top;
+      const safeX = Math.max(80, Math.min(container.clientWidth - 80, pixelX));
+
+      hoverGuide.setAttribute("x1", pointX);
+      hoverGuide.setAttribute("x2", pointX);
+      hoverGuide.setAttribute("visibility", "visible");
+      hoverMarker.setAttribute("cx", pointX);
+      hoverMarker.setAttribute("cy", pointY);
+      hoverMarker.setAttribute("visibility", "visible");
+
+      tooltip.replaceChildren();
+      const dateLabel = document.createElement("strong");
+      dateLabel.textContent = formatMonthYear(point.date);
+      const valueLabel = document.createElement("span");
+      valueLabel.textContent = comma(point.arrests) + " arrests";
+      tooltip.appendChild(dateLabel);
+      tooltip.appendChild(valueLabel);
+      tooltip.style.left = safeX + "px";
+      tooltip.style.top = pixelY + "px";
+      tooltip.dataset.visible = "true";
+      tooltip.setAttribute("aria-hidden", "false");
+    }
+
+    function hideTooltip() {
+      hoverGuide.setAttribute("visibility", "hidden");
+      hoverMarker.setAttribute("visibility", "hidden");
+      tooltip.dataset.visible = "false";
+      tooltip.setAttribute("aria-hidden", "true");
+    }
+
+    points.forEach(point => {
+      const hit = document.createElementNS(svg.namespaceURI, "circle");
+      hit.setAttribute("class", "hover-target");
+      hit.setAttribute("cx", x(point.date));
+      hit.setAttribute("cy", y(point.arrests));
+      hit.setAttribute("r", "16");
+      hit.setAttribute("fill", "transparent");
+      hit.setAttribute("tabindex", "0");
+      hit.setAttribute(
+        "aria-label",
+        formatMonthYear(point.date) + ": " + comma(point.arrests) + " arrests"
+      );
+      hit.addEventListener("mouseenter", () => showTooltip(point));
+      hit.addEventListener("mousemove", () => showTooltip(point));
+      hit.addEventListener("mouseleave", hideTooltip);
+      hit.addEventListener("focus", () => showTooltip(point));
+      hit.addEventListener("blur", hideTooltip);
+      svg.appendChild(hit);
+    });
+
+    container.appendChild(svg);
+    container.appendChild(tooltip);
+  }
+
+  document.querySelectorAll(".tab-button").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".tab-button").forEach(b => b.setAttribute("aria-selected", "false"));
+      button.setAttribute("aria-selected", "true");
+      draw(button.dataset.scope);
+    });
+  });
+
+  draw("Central Texas");
+})();
+</script>
+</body>
+</html>
