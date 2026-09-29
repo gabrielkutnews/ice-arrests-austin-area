@@ -159,9 +159,9 @@
 <script id="chart-data" type="application/json">[
   {
     "geography": "Central Texas",
-    "first_value": 101,
+    "first_value": 237,
     "last_value": 967,
-    "pct_change": 857.4257,
+    "pct_change": 308.0169,
     "points": [
       {
         "month": "2022-10-01",
@@ -351,9 +351,9 @@
   },
   {
     "geography": "National",
-    "first_value": 16613,
+    "first_value": 12174,
     "last_value": 49091,
-    "pct_change": 195.4975,
+    "pct_change": 303.2446,
     "points": [
       {
         "month": "2022-10-01",
@@ -543,9 +543,9 @@
   },
   {
     "geography": "Texas",
-    "first_value": 3913,
+    "first_value": 3011,
     "last_value": 11986,
-    "pct_change": 206.3123,
+    "pct_change": 298.0737,
     "points": [
       {
         "month": "2022-10-01",
@@ -801,7 +801,7 @@
     document.getElementById("chart-title").textContent = headlineMetric + " in " + scope;
     document.getElementById("chart-deck").textContent =
       "The number of ICE " + metricLabel + " has risen by " + pct(record.pct_change) +
-      "% from Oct. 2022 to July 2026.";
+      "% from Jan. 2025 to July 2026.";
 
     const width = 920;
     const height = 620;
@@ -810,8 +810,10 @@
     const plotHeight = height - margin.top - margin.bottom;
     const minDate = points[0].date;
     const maxDate = points[points.length - 1].date;
-    const maxY = niceMax(Math.max(...points.map(d => d.arrests)));
-    const tickStep = maxY <= 1000 ? 100 : maxY <= 10000 ? 1000 : 10000;
+    const maxY = scope === "Texas"
+      ? 12000
+      : niceMax(Math.max(...points.map(d => d.arrests)));
+    const tickStep = maxY <= 1000 ? 100 : maxY <= 12000 ? 2000 : 10000;
     const yTicks = [];
     for (let v = 0; v <= maxY; v += tickStep) yTicks.push(v);
 
